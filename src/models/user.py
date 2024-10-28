@@ -12,4 +12,4 @@ class User(Base):
     firstname = Column(String, nullable=False)
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
-    weight = Column(String, nullable=False)
+    weight = Column(Integer, nullable=False)

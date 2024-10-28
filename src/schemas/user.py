@@ -5,14 +5,14 @@ class UserCreate(BaseModel):
     firstname: str
     name: str
     age: int
-    weight: str
+    weight: int
 
 class UserResponse(BaseModel):
     uuid: UUID
     firstname: str
     name: str
     age: int
-    weight: str
+    weight: int
 
     class Config:
         orm_mode = True  # Permet à Pydantic de lire les objets SQLAlchemy
