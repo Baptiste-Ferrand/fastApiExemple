@@ -32,8 +32,28 @@ async def delete_user_from_db(user_uuid: str, db: AsyncSession):
 
 async def fetch_user_from_db(user_uuid: str, db: AsyncSession):
     result = await db.execute(select(User).where(User.uuid == UUID(user_uuid)))
-    return result.scalars().first()
+    user = result.scalars().first()
+    if not user:
+        raise NoResultFound("User not found")
+    return user
 
 async def fetch_all_users(db: AsyncSession):
     result = await db.execute(select(User))
     return result.scalars().all()
+
+async def update_user_in_db(user_uuid: str, user_data: UserCreate, db: AsyncSession):
+    result = await db.execute(select(User).where(User.uuid == UUID(user_uuid)))
+    user = result.scalars().first()
+    
+    if not user:
+        raise NoResultFound("User not found")
+    
+    user.firstname = user_data.firstname
+    user.name = user_data.name
+    user.age = user_data.age
+    user.weight = user_data.weight
+    
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    return user

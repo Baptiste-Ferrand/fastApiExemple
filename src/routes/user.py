@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.user import UserCreate, UserResponse
-from src.controllers.user import create_user, delete_user, get_user, get_all_users
+from src.controllers.user import create_user, delete_user, get_user, get_all_users, update_user
 from src.database import get_db
 
 router = APIRouter()
@@ -22,3 +22,7 @@ async def get_user_route(user_uuid: str, db: AsyncSession = Depends(get_db)):
 @router.get("/", response_model=List[UserResponse], status_code=200)
 async def get_all_users_route(db: AsyncSession = Depends(get_db)):
     return await get_all_users(db)
+
+@router.put("/{user_uuid}", response_model=UserResponse, status_code=200)
+async def update_user_route(user_uuid: str, user: UserCreate, db: AsyncSession = Depends(get_db)):
+    return await update_user(user_uuid, user, db)
