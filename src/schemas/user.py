@@ -1,18 +1,13 @@
-from pydantic import BaseModel
-from uuid import UUID
+from pydantic import BaseModel, EmailStr
 
 class UserCreate(BaseModel):
-    firstname: str
-    name: str
-    age: int
-    weight: int
+    email: EmailStr
+    password: str
+    confirm_password: str
 
 class UserResponse(BaseModel):
-    uuid: UUID
-    firstname: str
-    name: str
-    age: int
-    weight: int
+    uuid: str
+    email: EmailStr
 
     class Config:
-        orm_mode = True  # Permet à Pydantic de lire les objets SQLAlchemy
+        orm_mode = True
