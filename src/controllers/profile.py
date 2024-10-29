@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.user import UserCreate
-from src.services.user import save_user_to_db, delete_user_from_db, fetch_all_users, fetch_user_from_db, update_user_in_db
+from services.profile import save_user_to_db, delete_user_from_db, fetch_all_users, fetch_user_from_db, update_user_in_db
 from sqlalchemy.exc import NoResultFound
-from src.validators.user import validate_user_data, validate_uuid
+from validators.profile import validate_user_data, validate_uuid
 
 
 async def create_user(user: UserCreate, db: AsyncSession):

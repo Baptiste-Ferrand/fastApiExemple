@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.user import UserCreate, UserResponse
-from src.controllers.user import create_user, delete_user, get_user, get_all_users, update_user
+from controllers.profile import create_user, delete_user, get_user, get_all_users, update_user
 from src.database import get_db
 
 router = APIRouter()
