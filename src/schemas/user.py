@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 class UserCreate(BaseModel):
     email: str
@@ -12,3 +12,11 @@ class UserResponse(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse
+
+class UserUpdateEmail(BaseModel):
+    new_email: str
