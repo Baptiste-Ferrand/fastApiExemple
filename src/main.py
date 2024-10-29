@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from src.database import engine
 from src.models.user import Base
-from src.routes import user  
+from routes import profile  
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # Enregistrer les routes
-app.include_router(user.router, prefix="/users", tags=["users"])
+app.include_router(profile.router, prefix="/users", tags=["users"])
 
 @app.get("/")
 async def root():
