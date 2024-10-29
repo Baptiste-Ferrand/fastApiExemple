@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.schemas.user import UserCreate, TokenResponse, UserUpdateEmail
-from src.controllers.user import create_user, update_user_email
+from src.schemas.user import UserCreate, TokenResponse, UserUpdateEmail, UserUpdatePassword
+from src.controllers.user import create_user, update_user_email, update_user_password
 from src.database import get_db
 from src.utils.jwt_handler import verify_access_token
 
@@ -18,3 +18,12 @@ async def update_user_email_route(
     db: AsyncSession = Depends(get_db)
 ):
     return await update_user_email(user_update, token, db)
+
+@router.put("/password", status_code=204)
+async def update_user_password_route(
+    user_update: UserUpdatePassword, 
+    token: dict = Depends(verify_access_token), 
+    db: AsyncSession = Depends(get_db)
+):
+    user_id = token.get("sub")
+    await update_user_password(user_id, user_update.current_password, user_update.new_password, user_update.confirm_password, db)

@@ -20,3 +20,8 @@ class TokenResponse(BaseModel):
 
 class UserUpdateEmail(BaseModel):
     new_email: str
+
+class UserUpdatePassword(BaseModel):
+    current_password: str
+    new_password: str
+    confirm_password: str
