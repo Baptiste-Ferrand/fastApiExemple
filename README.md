@@ -23,7 +23,12 @@ pip install -r requirements.txt
 ```bash
 deactivate
 ```
-
+## Generate Secret Key For JWT
+First u need to copy the .env.example and rename it .env 
+#### For generate the key in the .env 
+```bash
+echo -e "\nSECRET_KEY=$(openssl rand -hex 32)" >> .env
+```
 ## For Starting The Api
 ```bash
 uvicorn src.main:app --reload
