@@ -10,8 +10,7 @@ async def save_user_to_db(email: str, hashed_password: str, db: AsyncSession):
     return new_user
 
 async def update_email_in_db(user_id: str, new_email: str, db: AsyncSession):
-    result = await db.execute(select(User).where(User.uuid == user_id))
-    user = result.scalars().first()
+    user = await get_user_by_id(user_id, db)
     
     if not user:
         raise Exception("User not found.")
@@ -22,13 +21,26 @@ async def update_email_in_db(user_id: str, new_email: str, db: AsyncSession):
     return user
 
 async def update_password_in_db(user_id: str, hashed_password: str, db: AsyncSession):
-    async with db.begin():
-        result = await db.execute(select(User).where(User.uuid == user_id))
-        user = result.scalars().first()
-        if user:
-            user.hashed_password = hashed_password
-            await db.commit()
+    user = await get_user_by_id(user_id, db)
+    if not user:
+        raise Exception("User not found.")
+    
+    user.password = hashed_password  
+    await db.commit()
+    await db.refresh(user)
+
 
 async def get_user_by_id(user_id: str, db: AsyncSession):
     result = await db.execute(select(User).where(User.uuid == user_id))
     return result.scalars().first()
+
+async def delte_user_in_db(user_id: str, db: AsyncSession):
+    user = await get_user_by_id(user_id, db)
+
+    if not user:
+        raise Exception(
+            detail="User not found"
+        )
+    
+    await db.delete(user)
+    await db.commit()

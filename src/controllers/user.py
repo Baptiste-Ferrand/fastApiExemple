@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.schemas.user import TokenResponse, UserCreate, UserUpdateEmail, UserResponse
-from src.services.user import save_user_to_db, update_email_in_db, get_user_by_id, update_password_in_db
+from src.services.user import save_user_to_db, update_email_in_db, get_user_by_id, update_password_in_db, delte_user_in_db
 from src.utils.security import hash_password, verify_password
 from src.validators.user import validate_passwords, validate_email_format
 from sqlalchemy.future import select
@@ -75,22 +75,49 @@ async def update_user_email(user_update: UserUpdateEmail, token: dict, db: Async
             detail=f"Error updating email: {str(e)}"
         )
 
-async def update_user_password(user_id: str, current_password: str, new_password: str, confirm_password: str, db: AsyncSession):
+async def update_user_password(token: dict, current_password: str, new_password: str, confirm_password: str, db: AsyncSession):
+    user_id = token.get("sub")
     validate_passwords(new_password, confirm_password)
     
     user = await get_user_by_id(user_id, db)
-    if not user or not verify_password(current_password, user.hashed_password):
+    
+    if not user or not verify_password(current_password, user.password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Current password is incorrect."
         )
     
+    if verify_password(new_password, user.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password can't be the actual password"
+        )
+
     hashed_new_password = hash_password(new_password)
-    
+
     try:
-        await update_password_in_db(user_id, hashed_new_password, db)
+        await update_password_in_db(user_id, hashed_new_password, db) 
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error updating password: {str(e)}"
         )
+
+async def delete_user(token: dict, current_password: str, db: AsyncSession):
+    user_id = token.get("sub")
+    
+    user = await get_user_by_id(user_id, db)
+
+    if not user or not verify_password(current_password, user.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current password is incorrect."
+        )
+    
+    try:
+        await delte_user_in_db(user_id, db)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating password: {str(e)}"
+        ) 

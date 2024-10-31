@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.schemas.user import UserCreate, TokenResponse, UserUpdateEmail, UserUpdatePassword
-from src.controllers.user import create_user, update_user_email, update_user_password
+from src.schemas.user import UserCreate, TokenResponse, UserUpdateEmail, UserUpdatePassword, UserDeleted
+from src.controllers.user import create_user, update_user_email, update_user_password, delete_user
 from src.database import get_db
 from src.utils.jwt_handler import verify_access_token
 
@@ -25,5 +25,12 @@ async def update_user_password_route(
     token: dict = Depends(verify_access_token), 
     db: AsyncSession = Depends(get_db)
 ):
-    user_id = token.get("sub")
-    await update_user_password(user_id, user_update.current_password, user_update.new_password, user_update.confirm_password, db)
+    await update_user_password(token, user_update.current_password, user_update.new_password, user_update.confirm_password, db)
+
+@router.post("/delete", status_code=204)
+async def delete_user_route(
+    user_update: UserDeleted,
+    token: dict = Depends(verify_access_token), 
+    db: AsyncSession = Depends(get_db)
+):
+    await delete_user(token, user_update.current_password, db)
