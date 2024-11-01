@@ -11,7 +11,7 @@ router = APIRouter()
 async def create_user_route(user: UserCreate, db: AsyncSession = Depends(get_db)):
     return await create_user(user, db)
 
-@router.put("/email", response_model=TokenResponse, status_code=200)
+@router.patch("/email", response_model=TokenResponse, status_code=200)
 async def update_user_email_route(
     user_update: UserUpdateEmail, 
     token: dict = Depends(verify_access_token), 
@@ -19,7 +19,7 @@ async def update_user_email_route(
 ):
     return await update_user_email(user_update, token, db)
 
-@router.put("/password", status_code=204)
+@router.patch("/password", status_code=204)
 async def update_user_password_route(
     user_update: UserUpdatePassword, 
     token: dict = Depends(verify_access_token), 
