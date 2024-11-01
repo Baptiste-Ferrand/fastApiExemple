@@ -1,7 +1,9 @@
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.schemas.profile import ProfileCreate
 from src.schemas.user import TokenResponse, UserCreate, UserUpdateEmail, UserResponse
 from src.services.user import save_user_to_db, update_email_in_db, get_user_by_id, update_password_in_db, delte_user_in_db
+from src.services.profile import create_profile_for_user_from_db
 from src.utils.security import hash_password, verify_password
 from src.validators.user import validate_passwords, validate_email_format
 from sqlalchemy.future import select
@@ -27,14 +29,18 @@ async def create_user(user: UserCreate, db: AsyncSession):
     try:
         user_data = await save_user_to_db(user.email, hashed_password, db)
         user_data.uuid = str(user_data.uuid)
+        
+        profile_data = ProfileCreate()
+        await create_profile_for_user_from_db(user_data.uuid, profile_data, db)
+
         token_data = {"sub": user_data.uuid, "email": user_data.email}
         access_token = create_access_token(data=token_data)
         
         return TokenResponse(
-        access_token=access_token,
-        token_type="bearer",
-        user=user_data
-    )
+            access_token=access_token,
+            token_type="bearer",
+            user=user_data
+        )
     except IntegrityError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
