@@ -6,6 +6,7 @@ class ProfileCreate(BaseModel):
     name: str = "simpson"
     age: int = 32
     weight: int = 180
+    height: int = 180
 
 class ProfileResponse(BaseModel):
     uuid: UUID
@@ -13,6 +14,7 @@ class ProfileResponse(BaseModel):
     name: str
     age: int
     weight: int
+    height: int
     user_id: UUID
 
     class Config:
@@ -46,3 +48,10 @@ class ProfileResponseWeight(BaseModel):
     weight: int
     uuid: str
 
+
+class ProfileUpdateHeight(BaseModel):
+    height: int
+
+class ProfileResponseHeight(BaseModel):
+    height: int
+    uuid: str

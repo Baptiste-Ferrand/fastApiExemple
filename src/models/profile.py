@@ -11,5 +11,6 @@ class Profile(Base):
     name = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     weight = Column(Integer, nullable=False)
+    height = Column(Integer, nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.uuid", ondelete="CASCADE"), nullable=False)
     user = relationship("User", back_populates="profile")
