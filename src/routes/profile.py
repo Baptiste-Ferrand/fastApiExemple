@@ -1,11 +1,13 @@
-# from typing import List
-# from fastapi import APIRouter, Depends
-# from sqlalchemy.ext.asyncio import AsyncSession
-# from src.schemas.user import UserCreate, UserResponse
-# from controllers.profile import create_user, delete_user, get_user, get_all_users, update_user
-# from src.database import get_db
+from typing import List
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from src.schemas.profile import ProfileUpdateFristname, ProfileResponseFirstname
+from src.controllers.profile import update_firstname_profile
+from src.database import get_db
+from src.utils.jwt_handler import verify_access_token
 
-# router = APIRouter()
+
+router = APIRouter()
 
 # @router.post("/", response_model=UserResponse, status_code=201)
 # async def create_user_route(user: UserCreate, db: AsyncSession = Depends(get_db)):
@@ -26,3 +28,11 @@
 # @router.put("/{user_uuid}", response_model=UserResponse, status_code=200)
 # async def update_user_route(user_uuid: str, user: UserCreate, db: AsyncSession = Depends(get_db)):
 #     return await update_user(user_uuid, user, db)
+
+@router.patch("/firstname", response_model=ProfileResponseFirstname, status_code=200)
+async def update_firstname_route(
+    profile_update: ProfileUpdateFristname,
+    token: dict = Depends(verify_access_token),
+    db: AsyncSession = Depends(get_db)
+):
+   return await update_firstname_profile(token, profile_update, db)

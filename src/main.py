@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 # Enregistrer les routes
-# app.include_router(profile.router, prefix="/profil", tags=["profil"])
+app.include_router(profile.router, prefix="/profile", tags=["profil"])
 app.include_router(user.router, prefix="/user", tags=["user"])
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
