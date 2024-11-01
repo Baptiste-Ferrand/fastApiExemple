@@ -14,6 +14,7 @@ async def create_profile_for_user_from_db(user_id: str, profile_data: ProfileCre
         name=profile_data.name,
         age=profile_data.age,
         weight=profile_data.weight,
+        height=profile_data.height,
         user_id=user_id
     )
     db.add(new_profile )
@@ -62,6 +63,16 @@ async def update_weight_profile_in_db(user_id: str, weight: int, db: AsyncSessio
         raise Exception("the profile doesn't existe.")
     
     user_profile.weight = weight
+    await db.commit()
+    await db.refresh(user_profile)
+    return user_profile
+
+async def update_height_profile_in_db(user_id: str, height: int, db: AsyncSession):
+    user_profile = await get_profil_by_user_id(user_id, db)
+    if not user_profile:
+        raise Exception("the profile doesn't existe.")
+    
+    user_profile.height = height
     await db.commit()
     await db.refresh(user_profile)
     return user_profile
