@@ -24,3 +24,25 @@ class ProfileUpdateFristname(BaseModel):
 class ProfileResponseFirstname(BaseModel):
     firstname: str
     uuid: str
+
+class ProfileUpdateName(BaseModel):
+    name: str
+
+class ProfileResponseName(BaseModel):
+    name: str
+    uuid: str
+
+class ProfileUpdateAge(BaseModel):
+    age: int
+
+class ProfileResponseAge(BaseModel):
+    age: int
+    uuid: str
+
+class ProfileUpdateWeight(BaseModel):
+    weight: int
+
+class ProfileResponseWeight(BaseModel):
+    weight: int
+    uuid: str
+
