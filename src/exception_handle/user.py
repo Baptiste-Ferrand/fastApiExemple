@@ -46,3 +46,10 @@ def handle_new_password(user, new_password):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="New password can't be the actual password"
         )
+
+def handle_new_email(user, new_email):
+    if user.email == new_email :
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Current email is already the same"
+        )
