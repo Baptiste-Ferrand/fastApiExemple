@@ -23,8 +23,9 @@ async def create_profile_for_user_from_db(
 
 
 async def get_profil_by_user_id(user_id: str, db: AsyncSession):
-    result = await db.execute(select(Profile).where(user_id == user_id))
-    return result.scalars().first()
+    result = await db.execute(select(Profile).where(Profile.user_id == user_id))
+    profile =  result.scalars().first()
+    return profile
 
 
 async def update_firstname_profile_in_db(
