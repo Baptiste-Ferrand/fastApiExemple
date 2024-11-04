@@ -15,7 +15,7 @@ from src.validators.user import validate_passwords, validate_email_format
 from sqlalchemy.future import select
 from src.models.user import User
 from src.utils.jwt_handler import create_access_token
-from src.exception_handle.user import (
+from src.utils.exception_handle import (
     handle_exception,
     handle_current_password,
     handle_new_password,
