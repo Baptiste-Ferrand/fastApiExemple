@@ -55,7 +55,7 @@ async def create_initial_data():
                 hashed_password = pwd_context.hash("admin")  # Change ce mot de passe par sécurité après l'init
                 admin_user = User(
                     email="admin@example.com",
-                    password_hash=hashed_password,
+                    password=hashed_password,
                     role_id=admin_role.id
                 )
                 session.add(admin_user)
