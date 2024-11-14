@@ -3,3 +3,6 @@ Base = declarative_base()
 
 from .user import User
 from .profile import Profile
+from .role import Role
+from .permission import Permission
+from .role_permissions import role_permissions
