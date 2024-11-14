@@ -5,14 +5,20 @@ from contextlib import asynccontextmanager
 from src.database import engine
 from src.models.user import Base
 from src.routes import profile, user, auth
+from src.scripts.init_db import create_initial_data
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    yield
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        await create_initial_data()
+        yield
+    except Exception as e:
+        print(f"Erreur pendant l'initialisation de l'application : {e}")
+        raise  # Pour arrêter le démarrage si nécessaire
 
 app = FastAPI(lifespan=lifespan)
 
