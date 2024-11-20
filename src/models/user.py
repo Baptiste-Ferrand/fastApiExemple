@@ -9,7 +9,6 @@ class User(Base):
     uuid = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String, unique=True, index=True, nullable=False)
     password = Column(String, nullable=False)
-    role_id = Column(Integer, ForeignKey('roles.id'))
 
-    role = relationship("Role", back_populates="users")
+    roles = relationship("Role", secondary="user_roles", back_populates="users")
     profile = relationship("Profile", back_populates="user", uselist=False, cascade="all, delete")
