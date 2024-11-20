@@ -40,15 +40,17 @@ async def create_user(user: UserCreate, db: AsyncSession):
     try:
         user_data = await save_user_to_db(user.email, hashed_password, db)
         user_data.uuid = str(user_data.uuid)
-
+        print(user_data.roles, "les roles de mon nouvelles user.....!!")
         profile_data = ProfileCreate()
         await create_profile_for_user_from_db(user_data.uuid, profile_data, db)
 
-        token_data = {"sub": user_data.uuid, "email": user_data.email, "role": user_data.role}
+        token_data = {"sub": user_data.uuid, "email": user_data.email, "roles": user_data.roles}
         access_token = create_access_token(data=token_data)
 
         return TokenResponse(
-            access_token=access_token, token_type="bearer", user=user_data
+            access_token=access_token,
+            token_type="bearer",
+            user=user_data 
         )
 
     except Exception as e:

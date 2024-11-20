@@ -14,14 +14,16 @@ async def save_user_to_db(email: str, hashed_password: str, db: AsyncSession):
     new_user = User(
         email=email,
         password=hashed_password,
-        role_id= user_role.id)
+        roles= [user_role])
     db.add(new_user)
     await db.commit()
     await db.refresh(new_user)
+    for role in new_user.roles:
+        print(f"dans service Role: {role.name}")
     return UserResponse(
         uuid= str(new_user.uuid),
         email= new_user.email,
-        role= user_role.name
+        roles= [role.name for role in new_user.roles]
     )
 
 
