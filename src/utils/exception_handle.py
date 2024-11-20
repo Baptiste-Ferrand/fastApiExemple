@@ -61,9 +61,10 @@ def handle_auth_veryfication(user, password):
             detail="Invalid email or password"
         )
 
-def handle_role_verification(token):
-    if token.get("role") != "admin":
-        raise HTTPException(status_code=403, detail="Not authorized to create roles")
+def handle_role_verification(token: dict, allowed_roles: list[str]):
+    user_roles = token.get("roles", [])  
+    if not any(role in allowed_roles for role in user_roles):
+        raise HTTPException(status_code=403, detail="Not authorized for this action.")
     
 
 def handle_user_not_found(user):
