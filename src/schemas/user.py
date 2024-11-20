@@ -8,7 +8,7 @@ class UserCreate(BaseModel):
 class UserResponse(BaseModel):
     uuid: str
     email: str
-    role: str
+    roles: list[str]
 
     class Config:
         orm_mode = True
