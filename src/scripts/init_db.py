@@ -31,44 +31,41 @@ async def create_initial_data():
                 manage_permission = Permission(name="manage_permission")
                 session.add(manage_permission)
 
-            # Vérification de l'existence du rôle admin
+            # Vérification et création du rôle admin
             admin_role_result = await session.execute(
                 select(Role).filter_by(name="admin")
             )
             admin_role = admin_role_result.scalar()
 
             if not admin_role:
-                # Création du rôle admin avec les permissions de base
                 admin_role = Role(name="admin")
-                admin_role.permissions = [manage_role, manage_permission]  # Assignation anticipée des permissions
+                admin_role.permissions = [manage_role, manage_permission]
                 session.add(admin_role)
-                await session.flush()  # Permet de générer l'id du rôle
+                await session.flush()
 
-            # Vérification de l'existence du rôle utilisateur par défaut
+            # Vérification et création du rôle utilisateur par défaut
             user_role_result = await session.execute(
                 select(Role).filter_by(name="user")
             )
             user_role = user_role_result.scalar()
 
             if not user_role:
-                # Création du rôle utilisateur par défaut
                 user_role = Role(name="user")
                 session.add(user_role)
                 await session.flush()
-                
-            # Vérification de l'existence de l'utilisateur admin
+
+            # Vérification et création de l'utilisateur admin
             admin_user_result = await session.execute(
                 select(User).filter_by(email="admin@example.com")
             )
             admin_user = admin_user_result.scalar()
 
             if not admin_user:
-                # Création d'un utilisateur admin par défaut
                 hashed_password = pwd_context.hash("admin")  # Change ce mot de passe par sécurité après l'init
                 admin_user = User(
                     email="admin@example.com",
                     password=hashed_password,
-                    role_id=admin_role.id
+                    roles=[admin_role, user_role]  # Ajouter plusieurs rôles
                 )
                 session.add(admin_user)
 
@@ -84,5 +81,3 @@ async def create_initial_data():
                 session.add(admin_profile)
 
             await session.commit()
-
-# Supprime l'appel direct à `asyncio.run()` pour éviter des erreurs dans des contextes asynchrones déjà existants
