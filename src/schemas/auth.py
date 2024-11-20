@@ -7,6 +7,7 @@ class LoginUser(BaseModel):
 class LoginResponse(BaseModel):
     uuid: str
     email: str
+    role: str
 
     class Config:
         orm_mode = True
