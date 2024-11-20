@@ -60,3 +60,12 @@ def handle_auth_veryfication(user, password):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password"
         )
+
+def handle_role_verification(token):
+    if token.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Not authorized to create roles")
+    
+
+def handle_user_not_found(user):
+     if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
