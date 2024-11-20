@@ -20,6 +20,7 @@ from src.utils.exception_handle import (
     handle_current_password,
     handle_new_password,
     handle_new_email,
+    handle_user_not_found,
 )
 
 
@@ -43,7 +44,7 @@ async def create_user(user: UserCreate, db: AsyncSession):
         profile_data = ProfileCreate()
         await create_profile_for_user_from_db(user_data.uuid, profile_data, db)
 
-        token_data = {"sub": user_data.uuid, "email": user_data.email}
+        token_data = {"sub": user_data.uuid, "email": user_data.email, "role": user_data.role}
         access_token = create_access_token(data=token_data)
 
         return TokenResponse(
@@ -58,22 +59,27 @@ async def update_user_email(
     user_update: UserUpdateEmail, token: dict, db: AsyncSession
 ):
     user_id = token.get("sub")
+    role= token.get("role")
 
     validate_email_format(user_update.new_email)
 
     user = await get_user_by_id(user_id, db)
-
+    handle_user_not_found(user)
     handle_new_email(user, user_update.new_email)
 
     try:
         updated_user = await update_email_in_db(user_id, user_update.new_email, db)
-        token_data = {"sub": str(updated_user.uuid), "email": updated_user.email}
+        token_data = {
+            "sub": str(updated_user.uuid),
+            "email": updated_user.email,
+            "role": role,
+        }
         access_token = create_access_token(data=token_data)
 
         return TokenResponse(
             access_token=access_token,
             token_type="bearer",
-            user=UserResponse(uuid=str(updated_user.uuid), email=updated_user.email),
+            user=UserResponse(uuid=str(updated_user.uuid), email=updated_user.email, role= role),
         )
     except Exception as e:
         handle_exception(e, "Error when update email")
