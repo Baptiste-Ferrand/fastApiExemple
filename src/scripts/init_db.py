@@ -44,6 +44,18 @@ async def create_initial_data():
                 session.add(admin_role)
                 await session.flush()  # Permet de générer l'id du rôle
 
+            # Vérification de l'existence du rôle utilisateur par défaut
+            user_role_result = await session.execute(
+                select(Role).filter_by(name="user")
+            )
+            user_role = user_role_result.scalar()
+
+            if not user_role:
+                # Création du rôle utilisateur par défaut
+                user_role = Role(name="user")
+                session.add(user_role)
+                await session.flush()
+                
             # Vérification de l'existence de l'utilisateur admin
             admin_user_result = await session.execute(
                 select(User).filter_by(email="admin@example.com")
