@@ -3,15 +3,13 @@ from src.models.role import Role
 from src.schemas.auth import LoginResponse
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-async def authenticate_user(email: str, db: AsyncSession):
-    result = await db.execute(select(User).where(User.email == email))
-    user = result.scalars().first()
-    
-    role_result = await db.execute(
-        select(Role).where(Role.id == user.role_id)
-    )
-    user_role = role_result.scalars().first()
 
-    print(user_role.name, "mon user loging")
-    return user, user_role
+async def authenticate_user(email: str, db: AsyncSession) -> User:
+    # Don't forget to eager load your wanted relationships in async mode, because lazy loading is not supported
+    user_query = select(User).where(User.email == email).options(selectinload(User.roles))
+    user = (await db.execute(user_query)).scalars().first()
+
+    print([role.name for role in user.roles], "mon user loging")
+    return user
